@@ -1,0 +1,42 @@
+name: Download, Unzip and Save Lobbyist Registry Data
+
+on:
+  push:
+    branches:
+      - main
+    schedule:
+      - cron: '0 0 * * *'
+jobs:
+  download_lobby_data:
+    runs-on: ubuntu-latest
+    steps:
+       - name: Checkout current repo
+         uses: actions/checkout@v2
+      - name: Checkout another TorontoLobbyistRegistry
+        uses: actions/checkout@v2
+        with:
+          repository: 'RamVasuthevan/TorontoLobbyistRegistry'
+          token: ${{ secrets.PAT }}
+          path: TorontoLobbyistRegistry
+      - name: Echo commit hash of TorontoLobbyistRegistry
+        run: |
+          cd TorontoLobbyistRegistry
+          echo "Commit hash: $(git rev-parse HEAD)"
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'  # You can specify a specific version, e.g., '3.8'
+      - name: Create and activate virtual environment
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+
+      - name: Install dependencies
+        run: |
+          source venv/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run Python script
+        run: |
+          python download_and_extract.py 
+      
