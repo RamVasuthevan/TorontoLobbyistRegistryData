@@ -1,9 +1,6 @@
 name: Download, Unzip and Save Lobbyist Registry Data
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
   schedule:
     - cron: '0 0 * * *'
@@ -13,6 +10,8 @@ jobs:
     steps:
       - name: Checkout current repo
         uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.PAT_TORONTOLOBBYISTREGISTRYDATA }}
       - name: Checkout TorontoLobbyistRegistry
         uses: actions/checkout@v2
         with:
@@ -23,7 +22,7 @@ jobs:
         run: |
           cd TorontoLobbyistRegistry
           TorontoLobbyistRegistry_commit_hash=$(git rev-parse HEAD)
-          echo "Commit hash: ${TorontoLobbyistRegistry_commit_hash}"
+          echo "TorontoLobbyistRegistry_commit_hash=${TorontoLobbyistRegistry_commit_hash}" >> $GITHUB_ENV
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
@@ -34,17 +33,27 @@ jobs:
           source venv/bin/activate
       - name: Install dependencies
         run: |
-          source venv/bin/activate
+          cd TorontoLobbyistRegistry
           pip install --upgrade pip
           pip install -r requirements.txt
       - name: Run Python script to download and unzip files
         run: |
+          cd TorontoLobbyistRegistry
           python download_and_extract.py 
+          cd ..
+          mv TorontoLobbyistRegistry/lobbyactivity-active.xml lobbyactivity-active.xml
+          mv TorontoLobbyistRegistry/lobbyactivity-closed.xml lobbyactivity-closed.xml
+          mv TorontoLobbyistRegistry/lobbyist-registry-readme.xls lobbyist-registry-readme.xls
+          mv TorontoLobbyistRegistry/Open_Data_Response.json Open_Data_Response.json
+          rm -rf TorontoLobbyistRegistry
       - name: Commit and push if files changed
         run: |-
           git config user.name "Automated"
           git config user.email "actions@users.noreply.github.com"
-          git add -A
+          git add lobbyactivity-active.xml
+          git add lobbyactivity-closed.xml
+          git add lobbyist-registry-readme.xls
+          git add Open_Data_Response.json
           timestamp=$(date -u)
-          git commit -m "Dowloaded: ${timestamp}: TorontoLobbyistRegistry commit ${TorontoLobbyistRegistry_commit_hash}" || exit 0
+          git commit -m "Dowloaded: ${timestamp}: commit: ${{env.TorontoLobbyistRegistry_commit_hash}}" || exit 0
           git push
