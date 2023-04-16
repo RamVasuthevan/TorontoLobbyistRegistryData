@@ -4,14 +4,15 @@ on:
   push:
     branches:
       - main
-    schedule:
-      - cron: '0 0 * * *'
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
 jobs:
   download_lobby_data:
     runs-on: ubuntu-latest
     steps:
-       - name: Checkout current repo
-         uses: actions/checkout@v2
+      - name: Checkout current repo
+        uses: actions/checkout@v2
       - name: Checkout TorontoLobbyistRegistry
         uses: actions/checkout@v2
         with:
@@ -39,11 +40,11 @@ jobs:
       - name: Run Python script to download and unzip files
         run: |
           python download_and_extract.py 
-    - name: Commit and push if files changed
-      run: |-
-        git config user.name "Automated"
-        git config user.email "actions@users.noreply.github.com"
-        git add -A
-        timestamp=$(date -u)
-        git commit -m "Dowloaded: ${timestamp}: TorontoLobbyistRegistry commit ${TorontoLobbyistRegistry_commit_hash}" || exit 0
-        git push
+      - name: Commit and push if files changed
+        run: |-
+          git config user.name "Automated"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          timestamp=$(date -u)
+          git commit -m "Dowloaded: ${timestamp}: TorontoLobbyistRegistry commit ${TorontoLobbyistRegistry_commit_hash}" || exit 0
+          git push
