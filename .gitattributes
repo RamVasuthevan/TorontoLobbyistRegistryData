@@ -1,0 +1,4 @@
+git lfs track "lobbyactivity-active.xml"
+git lfs track "lobbyactivity-closed.xml"
+git lfs track "lobbyist-registry-readme.xls"
+git lfs track "Open_Data_Response.json"
