@@ -22,7 +22,7 @@ jobs:
       - name: Echo commit hash of TorontoLobbyistRegistry
         run: |
           cd TorontoLobbyistRegistry
-          TorontoLobbyistRegistry_commit_hash=$(git rev-parse HEAD))
+          TorontoLobbyistRegistry_commit_hash=$(git rev-parse HEAD)
           echo "Commit hash: ${TorontoLobbyistRegistry_commit_hash}"
       - name: Set up Python
         uses: actions/setup-python@v2
