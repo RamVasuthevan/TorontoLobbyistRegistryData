@@ -1,3 +1,4 @@
 lobbyactivity-active.xml filter=lfs diff=lfs merge=lfs 
 lobbyactivity-closed.xml filter=lfs diff=lfs merge=lfs
 lobbyist-registry-readme.xls filter=lfs diff=lfs merge=lfs -text
+Lobbyist Registry Activity.zip filter=lfs diff=lfs merge=lfs -text
